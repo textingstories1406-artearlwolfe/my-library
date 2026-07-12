@@ -10,14 +10,13 @@
             --wood-mid: #351c0e;
             --wood-light: #522c16;
             --shelf-shadow: rgba(0, 0, 0, 0.85);
-            --pot-color: #d37c57;
         }
 
         html, body {
             background-color: transparent !important;
             color-scheme: dark;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             flex-direction: column;
@@ -28,11 +27,11 @@
 
         .bookcase {
             width: 100%;
-            max-width: 800px;
+            max-width: 650px;
             background: linear-gradient(135deg, #0f0703, #1c0e06);
-            border: 18px solid var(--wood-dark);
+            border: 16px solid var(--wood-dark);
             border-radius: 8px;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.9), inset 0 0 60px rgba(0,0,0,0.95);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.85), inset 0 0 50px rgba(0,0,0,0.95);
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
@@ -47,7 +46,7 @@
             max-height: 190px;
             overflow: hidden;
             gap: 10px;
-            padding: 35px 20px 0 20px;
+            padding: 35px 16px 0 16px;
             background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.1));
             border-bottom: 26px solid var(--wood-mid);
             box-shadow: inset 0 20px 30px rgba(0,0,0,0.85), inset 0 -15px 25px var(--shelf-shadow);
@@ -150,7 +149,7 @@
         .progress-strip { width: 3px; height: 22px; background: rgba(0,0,0,0.4); border-radius: 1px; position: relative; overflow: hidden; z-index: 3; box-shadow: inset 0 1px 2px rgba(0,0,0,0.6); }
         .progress-fill { position: absolute; bottom: 0; left: 0; width: 100%; background: #2ecc71; transition: height 0.3s ease; }
 
-        /* REALISTIC DECORATIONS */
+        /* ILLUSTRATED KAWAII POTTED PLANT */
         .decor-plant {
             display: flex;
             flex-direction: column;
@@ -158,28 +157,40 @@
             align-items: center;
             overflow: visible !important;
         }
+        /* Terracotta Pot with Kawaii Face */
         .decor-plant::after {
             content: '';
-            width: 80%;
-            height: 40%;
-            background: linear-gradient(90deg, #be633c, var(--pot-color) 30%, #e29370 70%, #9c4b28);
-            border-radius: 2px 2px 6px 6px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.4), inset 0 2px 2px rgba(255,255,255,0.2);
+            width: 85%;
+            height: 42%;
+            background-color: #ff8a52; /* Cute terracotta orange */
+            border-radius: 4px 4px 12px 12px;
+            box-shadow: 0 5px 8px rgba(0,0,0,0.4);
             z-index: 2;
+            position: relative;
+            /* Creates the cartoon eyes, blushing cheeks, and a tiny smile */
+            background-image: 
+                radial-gradient(circle at 32% 40%, #2c1d11 2.5px, transparent 3.5px),
+                radial-gradient(circle at 68% 40%, #2c1d11 2.5px, transparent 3.5px),
+                radial-gradient(circle at 20% 50%, #ff5e5e 4px, transparent 5px),
+                radial-gradient(circle at 80% 50%, #ff5e5e 4px, transparent 5px),
+                radial-gradient(circle at 50% 52%, transparent 2.5px, #2c1d11 3px, #2c1d11 4.5px, transparent 5.5px);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
         }
+        /* Layered Vibrant Green Succulent Leaves */
         .decor-plant::before {
             content: '';
             position: absolute;
-            bottom: 35%;
-            width: 130%;
-            height: 75%;
+            bottom: 38%;
+            width: 100%;
+            height: 60%;
             background: 
-                radial-gradient(circle at 50% 20%, #27ae60 20%, transparent 60%),
-                radial-gradient(circle at 20% 50%, #1e8449 30%, transparent 70%),
-                radial-gradient(circle at 80% 45%, #2ecc71 25%, transparent 65%),
-                radial-gradient(circle at 50% 60%, #145a32 40%, transparent 80%);
-            border-radius: 50% 50% 40% 40%;
-            filter: drop-shadow(0 3px 4px rgba(0,0,0,0.35));
+                radial-gradient(ellipse at 50% 100%, #2ecc71 40%, transparent 65%),
+                radial-gradient(circle at 22% 55%, #27ae60 30%, transparent 60%),
+                radial-gradient(circle at 78% 55%, #27ae60 30%, transparent 60%),
+                radial-gradient(circle at 50% 25%, #46e089 25%, transparent 55%);
+            border-radius: 40% 40% 30% 30%;
+            filter: drop-shadow(0 3px 3px rgba(0,0,0,0.3));
             z-index: 1;
         }
 
@@ -251,6 +262,7 @@
 
     <div class="bookcase" id="bookcase"></div>
 
+    <!-- Multi-Functional Editor Modal -->
     <div class="editor-modal" id="editorModal">
         <h3>Edit Shelf Item</h3>
         
@@ -289,6 +301,7 @@
         </div>
     </div>
 
+    <!-- Creation Modal -->
     <div class="editor-modal" id="creationModal">
         <h3>Add Shelf Decoration</h3>
         <div class="creation-menu">
@@ -321,10 +334,10 @@
         let libraryData = [];
         let selectedItemId = null;
         let currentUploadedBase64 = null;
-        const SHELF_MAX_WIDTH = 730; 
+        const SHELF_MAX_WIDTH = 585; 
 
-        if (localStorage.getItem('notion_library_3d_dynamic_v3')) {
-            libraryData = JSON.parse(localStorage.getItem('notion_library_3d_dynamic_v3'));
+        if (localStorage.getItem('notion_library_3d_dynamic_v5')) {
+            libraryData = JSON.parse(localStorage.getItem('notion_library_3d_dynamic_v5'));
         } else {
             libraryData = [
                 { id: 'b1', type: 'book', title: 'Design Patterns', author: 'E. Gamma', width: 42, height: 135, bg: '#1abc9c', cover: '', style: 'modern', progress: 65, lean: 0 },
@@ -337,7 +350,6 @@
         editWidth.oninput = () => widthVal.innerText = editWidth.value;
         editProgress.oninput = () => progressVal.innerText = editProgress.value;
 
-        // Process picture files for both photo frame and book covers
         function setupImageUpload(inputElement) {
             inputElement.addEventListener('change', (e) => {
                 const file = e.target.files[0];
@@ -354,7 +366,7 @@
         setupImageUpload(uploadBookCover);
 
         function saveToLocalStorage() {
-            localStorage.setItem('notion_library_3d_dynamic_v3', JSON.stringify(libraryData));
+            localStorage.setItem('notion_library_3d_dynamic_v5', JSON.stringify(libraryData));
         }
 
         function renderBookshelf() {
