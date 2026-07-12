@@ -85,7 +85,7 @@
                 4px 4px 8px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: center; /* Centered content vertically since progress is gone */
             align-items: center;
             overflow: hidden; 
             padding: 10px 0;
@@ -133,7 +133,7 @@
             transform: rotate(180deg);
             writing-mode: vertical-rl;
             text-orientation: mixed;
-            max-height: 80%;
+            max-height: 85%;
             pointer-events: none;
             gap: 6px;
             z-index: 3;
@@ -146,8 +146,6 @@
         }
 
         .book-author { color: rgba(255,255,255,0.65); font-size: 7.5px; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); }
-        .progress-strip { width: 3px; height: 22px; background: rgba(0,0,0,0.4); border-radius: 1px; position: relative; overflow: hidden; z-index: 3; box-shadow: inset 0 1px 2px rgba(0,0,0,0.6); }
-        .progress-fill { position: absolute; bottom: 0; left: 0; width: 100%; background: #2ecc71; transition: height 0.3s ease; }
 
         /* ILLUSTRATED KAWAII POTTED PLANT */
         .decor-plant {
@@ -157,17 +155,15 @@
             align-items: center;
             overflow: visible !important;
         }
-        /* Terracotta Pot with Kawaii Face */
         .decor-plant::after {
             content: '';
             width: 85%;
             height: 42%;
-            background-color: #ff8a52; /* Cute terracotta orange */
+            background-color: #ff8a52;
             border-radius: 4px 4px 12px 12px;
             box-shadow: 0 5px 8px rgba(0,0,0,0.4);
             z-index: 2;
             position: relative;
-            /* Creates the cartoon eyes, blushing cheeks, and a tiny smile */
             background-image: 
                 radial-gradient(circle at 32% 40%, #2c1d11 2.5px, transparent 3.5px),
                 radial-gradient(circle at 68% 40%, #2c1d11 2.5px, transparent 3.5px),
@@ -177,7 +173,6 @@
             background-size: 100% 100%;
             background-repeat: no-repeat;
         }
-        /* Layered Vibrant Green Succulent Leaves */
         .decor-plant::before {
             content: '';
             position: absolute;
@@ -262,7 +257,6 @@
 
     <div class="bookcase" id="bookcase"></div>
 
-    <!-- Multi-Functional Editor Modal -->
     <div class="editor-modal" id="editorModal">
         <h3>Edit Shelf Item</h3>
         
@@ -275,9 +269,6 @@
 
             <label for="uploadBookCover">Upload Spine/Cover Design</label>
             <input type="file" id="uploadBookCover" accept="image/*">
-
-            <label for="editProgress">Reading Progress (<span id="progressVal">0</span>%)</label>
-            <input type="range" id="editProgress" min="0" max="100" step="5">
 
             <label for="editStyle">Aesthetic Style</label>
             <select id="editStyle">
@@ -301,7 +292,6 @@
         </div>
     </div>
 
-    <!-- Creation Modal -->
     <div class="editor-modal" id="creationModal">
         <h3>Add Shelf Decoration</h3>
         <div class="creation-menu">
@@ -323,8 +313,6 @@
         const editAuthor = document.getElementById('editAuthor');
         const editWidth = document.getElementById('editWidth');
         const widthVal = document.getElementById('widthVal');
-        const editProgress = document.getElementById('editProgress');
-        const progressVal = document.getElementById('progressVal');
         const editStyle = document.getElementById('editStyle');
         const bookFields = document.getElementById('bookFields');
         const frameFields = document.getElementById('frameFields');
@@ -336,19 +324,18 @@
         let currentUploadedBase64 = null;
         const SHELF_MAX_WIDTH = 585; 
 
-        if (localStorage.getItem('notion_library_3d_dynamic_v5')) {
-            libraryData = JSON.parse(localStorage.getItem('notion_library_3d_dynamic_v5'));
+        if (localStorage.getItem('notion_library_3d_dynamic_v6')) {
+            libraryData = JSON.parse(localStorage.getItem('notion_library_3d_dynamic_v6'));
         } else {
             libraryData = [
-                { id: 'b1', type: 'book', title: 'Design Patterns', author: 'E. Gamma', width: 42, height: 135, bg: '#1abc9c', cover: '', style: 'modern', progress: 65, lean: 0 },
+                { id: 'b1', type: 'book', title: 'Design Patterns', author: 'E. Gamma', width: 42, height: 135, bg: '#1abc9c', cover: '', style: 'modern', lean: 0 },
                 { id: 'p1', type: 'plant', width: 48, height: 60, lean: 0 },
-                { id: 'b2', type: 'book', title: 'Clean Code', author: 'R. Martin', width: 48, height: 140, bg: '#2c3e50', cover: '', style: 'classic', progress: 100, lean: -3 },
+                { id: 'b2', type: 'book', title: 'Clean Code', author: 'R. Martin', width: 48, height: 140, bg: '#2c3e50', cover: '', style: 'classic', lean: -3 },
                 { id: 'f1', type: 'frame', width: 65, height: 80, image: '', lean: 0 }
             ];
         }
 
         editWidth.oninput = () => widthVal.innerText = editWidth.value;
-        editProgress.oninput = () => progressVal.innerText = editProgress.value;
 
         function setupImageUpload(inputElement) {
             inputElement.addEventListener('change', (e) => {
@@ -366,7 +353,7 @@
         setupImageUpload(uploadBookCover);
 
         function saveToLocalStorage() {
-            localStorage.setItem('notion_library_3d_dynamic_v5', JSON.stringify(libraryData));
+            localStorage.setItem('notion_library_3d_dynamic_v6', JSON.stringify(libraryData));
         }
 
         function renderBookshelf() {
@@ -431,15 +418,6 @@
                     }
                     element.appendChild(infoContainer);
 
-                    const progStrip = document.createElement('div');
-                    progStrip.className = 'progress-strip';
-                    const progFill = document.createElement('div');
-                    progFill.className = 'progress-fill';
-                    progFill.style.height = `${item.progress || 0}%`;
-                    if(item.progress === 100) progFill.style.backgroundColor = '#f1c40f';
-                    progStrip.appendChild(progFill);
-                    element.appendChild(progStrip);
-
                 } else if (item.type === 'frame') {
                     element.className = `shelf-item decor-frame`;
                     if (item.image) {
@@ -485,7 +463,6 @@
                 newObj.bg = colors[Math.floor(Math.random() * colors.length)];
                 newObj.cover = '';
                 newObj.style = 'modern';
-                newObj.progress = 0;
             } else if (type === 'plant') {
                 newObj.width = 46; newObj.height = 58;
             } else if (type === 'frame') {
@@ -515,8 +492,6 @@
                 frameFields.style.display = 'none';
                 editTitle.value = item.title;
                 editAuthor.value = item.author || '';
-                editProgress.value = item.progress || 0;
-                progressVal.innerText = item.progress || 0;
                 editStyle.value = item.style || 'modern';
             } else if (item.type === 'frame') {
                 bookFields.style.display = 'none';
@@ -545,7 +520,6 @@
                 if (item.type === 'book') {
                     item.title = editTitle.value;
                     item.author = editAuthor.value;
-                    item.progress = parseInt(editProgress.value);
                     item.style = editStyle.value;
                     if (currentUploadedBase64) {
                         item.cover = currentUploadedBase64;
